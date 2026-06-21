@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Serve PWA on local network for iPhone "Add to Home Screen" testing.
 set -euo pipefail
-ROOT="$(cd "$(dirname "$0")/.." && pwd)/web"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)/docs"
 PORT="${1:-8080}"
 IP=$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo "127.0.0.1")
 

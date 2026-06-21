@@ -47,27 +47,17 @@ ExpenseTracker/
 
 **Use the PWA** — not the Xcode app — for personal use with zero refresh hassle.
 
-Full guide: **[docs/STANDALONE_APP.md](docs/STANDALONE_APP.md)**
+Full guide: **[documentation/STANDALONE_APP.md](documentation/STANDALONE_APP.md)**
 
-1. Push to GitHub (free public repo)
-2. Enable **GitHub Pages → GitHub Actions**
-3. Open the URL on iPhone Safari → **Add to Home Screen**
+1. GitHub → **Settings → Pages → Deploy from branch → main → /docs**
+2. Open **https://ankaraoio.github.io/expenseTracker/** on iPhone Safari
+3. **Add to Home Screen**
 
 Opens full-screen from your home screen forever. No Mac, no 7-day expiry.
 
 ## No weekly Mac connection ($0)
 
-See **[docs/NO_MAC_WEEKLY.md](docs/NO_MAC_WEEKLY.md)** for two free options:
-
-1. **PWA** (`web/`) — Add to Home Screen, **never expires**, data on device
-2. **SideStore** — Native app auto-refreshes over Wi‑Fi (one-time setup)
-
-Quick try PWA on your phone (same Wi‑Fi):
-
-```bash
-./scripts/serve-pwa.sh
-# iPhone Safari → http://<your-mac-ip>:8080 → Add to Home Screen
-```
+See **[documentation/NO_MAC_WEEKLY.md](documentation/NO_MAC_WEEKLY.md)** for SideStore (native app) option.
 
 ## Bundle ID
 

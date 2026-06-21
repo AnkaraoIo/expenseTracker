@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Expenses" />
+  <meta name="theme-color" content="#007AFF" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>ExpenseTracker</title>
+</head>
+<body>
+  <div id="install-banner" class="install-banner" hidden>
+    <p>Install as app: tap <strong>Share</strong> → <strong>Add to Home Screen</strong></p>
+    <button type="button" id="dismiss-install">✕</button>
+  </div>
+
+  <header>
+    <h1 id="page-title">Dashboard</h1>
+  </header>
+
+  <main>
+    <section id="panel-dashboard" class="panel active">
+      <div class="month-nav card">
+        <button type="button" id="prev-month" aria-label="Previous month">‹</button>
+        <span id="month-label"></span>
+        <button type="button" id="next-month" aria-label="Next month">›</button>
+      </div>
+
+      <div class="card">
+        <div class="muted">Spent this month</div>
+        <div class="hero-amount" id="month-total">$0.00</div>
+        <div id="budget-block" hidden>
+          <div class="muted" id="budget-text"></div>
+          <div class="progress" id="budget-progress"><div id="budget-bar"></div></div>
+          <div class="budget-warn" id="budget-warn" hidden>Over budget</div>
+        </div>
+      </div>
+
+      <div id="dashboard-empty" class="card empty" hidden>
+        <p>No expenses this month.</p>
+        <button type="button" class="btn" id="go-add" style="margin-top:16px">Add first expense</button>
+      </div>
+
+      <div class="card" id="chart-card">
+        <h2>By category</h2>
+        <div id="category-chart"></div>
+      </div>
+
+      <div class="card">
+        <h2>Recent</h2>
+        <ul class="list" id="recent-list"></ul>
+      </div>
+    </section>
+
+    <section id="panel-expenses" class="panel">
+      <input class="search" type="search" id="search" placeholder="Search notes or categories" />
+      <div id="expense-list"></div>
+    </section>
+
+    <section id="panel-add" class="panel">
+      <div class="card">
+        <h2 id="add-title">Add Expense</h2>
+        <label for="amount">Amount</label>
+        <input class="amount-input" id="amount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00" />
+
+        <label>Category</label>
+        <div class="category-grid" id="category-grid"></div>
+
+        <label for="date">Date</label>
+        <input id="date" type="date" />
+
+        <label for="note">Note</label>
+        <textarea id="note" rows="2" placeholder="Optional"></textarea>
+
+        <button type="button" class="btn" id="save-expense">Save</button>
+      </div>
+    </section>
+
+    <section id="panel-settings" class="panel">
+      <div class="card">
+        <h2>Settings</h2>
+        <label for="currency">Currency</label>
+        <select id="currency">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="INR">INR</option>
+          <option value="JPY">JPY</option>
+          <option value="CAD">CAD</option>
+          <option value="AUD">AUD</option>
+        </select>
+
+        <label for="budget">Monthly budget (optional)</label>
+        <input id="budget" type="number" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 2000" />
+
+        <button type="button" class="btn secondary" id="export-csv">Export CSV</button>
+      </div>
+
+      <div class="card muted" style="font-size:0.8125rem;line-height:1.5">
+        <strong>Never expires.</strong> Data stays on this iPhone in local storage.
+        Add to Home Screen for a full-screen app experience — no Mac refresh needed.
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <button type="button" data-tab="dashboard" class="active"><span class="icon">◔</span>Dashboard</button>
+    <button type="button" data-tab="expenses"><span class="icon">≡</span>Expenses</button>
+    <button type="button" data-tab="add"><span class="icon">＋</span>Add</button>
+    <button type="button" data-tab="settings"><span class="icon">⚙</span>Settings</button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
