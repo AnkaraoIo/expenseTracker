@@ -312,3 +312,36 @@ nav button.active { color: var(--accent); }
   cursor: pointer;
   padding: 4px;
 }
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.settings-header h2 { margin: 0; }
+
+.beta-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 18%, var(--card));
+  color: var(--accent);
+}
+
+.version-line { margin-bottom: 16px; }
+
+.feedback-link {
+  display: inline-flex;
+  margin-top: 10px;
+  text-decoration: none;
+  text-align: center;
+}
+
+.about-card {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}

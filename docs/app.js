@@ -1,4 +1,6 @@
 const STORAGE_KEY = "expense-tracker-pwa";
+const APP_VERSION = "0.1.0-beta";
+const FEEDBACK_URL = "https://github.com/AnkaraoIo/expenseTracker/issues/new";
 
 const DEFAULT_CATEGORIES = [
   { id: "food", name: "Food", emoji: "🍔", color: "#FF9500" },
@@ -331,6 +333,7 @@ function render() {
   if (active === "settings") {
     document.getElementById("currency").value = state.settings.currency;
     document.getElementById("budget").value = state.settings.budget ?? "";
+    document.getElementById("app-version").textContent = APP_VERSION;
   }
 }
 
@@ -389,6 +392,7 @@ function init() {
     saveState();
   });
   document.getElementById("export-csv").addEventListener("click", exportCSV);
+  document.getElementById("feedback-link").href = FEEDBACK_URL;
 
   document.querySelectorAll("nav button").forEach((btn) => {
     btn.addEventListener("click", () => {

@@ -83,7 +83,12 @@
 
     <section id="panel-settings" class="panel">
       <div class="card">
-        <h2>Settings</h2>
+        <div class="settings-header">
+          <h2>Settings</h2>
+          <span class="beta-badge">Beta</span>
+        </div>
+        <p class="muted version-line">Version <span id="app-version"></span></p>
+
         <label for="currency">Currency</label>
         <select id="currency">
           <option value="USD">USD</option>
@@ -98,12 +103,13 @@
         <label for="budget">Monthly budget (optional)</label>
         <input id="budget" type="number" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 2000" />
 
-        <button type="button" class="btn secondary" id="export-csv">Export CSV</button>
+        <button type="button" class="btn secondary" id="export-csv">Export CSV backup</button>
+        <a class="btn secondary feedback-link" id="feedback-link" href="#" target="_blank" rel="noopener">Send beta feedback</a>
       </div>
 
-      <div class="card muted" style="font-size:0.8125rem;line-height:1.5">
-        <strong>Never expires.</strong> Data stays on this iPhone in local storage.
-        Add to Home Screen for a full-screen app experience — no Mac refresh needed.
+      <div class="card muted about-card">
+        <strong>Beta — personal use.</strong> Data stays on this device only.
+        Export CSV weekly as a backup. Bank import coming in a later phase.
       </div>
     </section>
   </main>
