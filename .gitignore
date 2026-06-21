@@ -1,0 +1,15 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+
+# macOS
+.DS_Store
+
+# IPA export
+build/
+
+# Env
+.env
