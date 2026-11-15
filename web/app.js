@@ -1,5 +1,5 @@
 const STORAGE_KEY = "expense-tracker-pwa";
-const APP_VERSION = "0.2.0-beta";
+const APP_VERSION = "0.2.1-beta";
 const FEEDBACK_URL = "https://github.com/AnkaraoIo/expenseTracker/issues/new";
 
 const DEFAULT_CATEGORIES = [
@@ -734,12 +734,73 @@ function showInstallBannerIfNeeded() {
   }
 }
 
-function init() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+let swRegistration = null;
+let pendingSwReload = false;
+
+function showUpdateBanner() {
+  const banner = document.getElementById("update-banner");
+  if (!banner || sessionStorage.getItem("update-banner-dismissed")) return;
+  banner.hidden = false;
+}
+
+function hideUpdateBanner() {
+  const banner = document.getElementById("update-banner");
+  if (banner) banner.hidden = true;
+}
+
+function setupServiceWorkerUpdates() {
+  if (!("serviceWorker" in navigator)) return;
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!pendingSwReload) return;
+    pendingSwReload = false;
+    window.location.reload();
+  });
+
+  navigator.serviceWorker
+    .register("./sw.js")
+    .then((reg) => {
+      swRegistration = reg;
+      if (reg.waiting) showUpdateBanner();
+
+      reg.addEventListener("updatefound", () => {
+        const worker = reg.installing;
+        if (!worker) return;
+        worker.addEventListener("statechange", () => {
+          if (worker.state === "installed" && navigator.serviceWorker.controller) {
+            showUpdateBanner();
+          }
+        });
+      });
+    })
+    .catch(() => {});
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      swRegistration?.update().catch(() => {});
+    }
+  });
+}
+
+function applyServiceWorkerUpdate() {
+  const reg = swRegistration;
+  if (!reg?.waiting) {
+    window.location.reload();
+    return;
   }
+  pendingSwReload = true;
+  reg.waiting.postMessage({ type: "SKIP_WAITING" });
+}
+
+function init() {
+  setupServiceWorkerUpdates();
 
   showInstallBannerIfNeeded();
+  document.getElementById("apply-update")?.addEventListener("click", applyServiceWorkerUpdate);
+  document.getElementById("dismiss-update")?.addEventListener("click", () => {
+    sessionStorage.setItem("update-banner-dismissed", "1");
+    hideUpdateBanner();
+  });
   document.getElementById("dismiss-install")?.addEventListener("click", () => {
     localStorage.setItem("install-banner-dismissed", "1");
     document.getElementById("install-banner").hidden = true;

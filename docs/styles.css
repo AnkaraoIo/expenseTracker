@@ -436,6 +436,42 @@ nav button.active { color: var(--accent); }
   padding: 4px;
 }
 
+.update-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 20px 12px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+  border-radius: 14px;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.update-banner p {
+  flex: 1;
+}
+
+.update-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.update-banner .dismiss-btn {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
 .settings-header {
   display: flex;
   align-items: center;
