@@ -504,3 +504,19 @@ nav button.active { color: var(--accent); }
   font-size: 0.8125rem;
   line-height: 1.5;
 }
+
+.settings-subtitle {
+  font-size: 1rem;
+  margin: 20px 0 8px;
+}
+
+.backup-hint {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+#last-backup-label {
+  margin-top: 10px;
+  font-size: 0.75rem;
+}

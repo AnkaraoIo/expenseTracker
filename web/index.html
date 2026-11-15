@@ -52,6 +52,7 @@
       <div id="dashboard-empty" class="card empty" hidden>
         <p>No expenses this month.</p>
         <button type="button" class="btn" id="go-add" style="margin-top:16px">Add first expense</button>
+        <button type="button" class="btn secondary" id="restore-from-empty" style="margin-top:10px">Restore backup</button>
       </div>
 
       <div class="card dash-filters" id="dash-filters" hidden>
@@ -159,13 +160,23 @@
         <label for="budget">Monthly budget (optional)</label>
         <input id="budget" type="number" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 2000" />
 
-        <button type="button" class="btn secondary" id="export-csv">Export CSV backup</button>
+        <h3 class="settings-subtitle">Backup & restore</h3>
+        <p class="muted backup-hint">
+          Data lives on this iPhone only. Removing the app or clearing Safari website data can delete it.
+          Save a full backup to Files or iCloud before reinstalling.
+        </p>
+        <button type="button" class="btn" id="export-json">Save full backup</button>
+        <button type="button" class="btn secondary" id="export-csv">Export CSV</button>
+        <input type="file" id="import-json" accept=".json,application/json" hidden />
+        <button type="button" class="btn secondary" id="import-json-btn">Restore from backup</button>
+        <p class="muted" id="last-backup-label"></p>
+
         <a class="btn secondary feedback-link" id="feedback-link" href="#" target="_blank" rel="noopener">Send beta feedback</a>
       </div>
 
       <div class="card muted about-card">
-        <strong>Beta — personal use.</strong> Data stays on this device only.
-        Export CSV weekly as a backup. Bank import coming in a later phase.
+        <strong>Reinstalling?</strong> Do not delete Safari website data. Use Settings → Save full backup first,
+        then restore after install. Bank import coming in a later phase.
       </div>
     </section>
   </main>

@@ -1,5 +1,6 @@
 const STORAGE_KEY = "expense-tracker-pwa";
-const APP_VERSION = "0.2.1-beta";
+const APP_VERSION = "0.2.2-beta";
+const BACKUP_KEY = "expense-tracker-last-backup";
 const FEEDBACK_URL = "https://github.com/AnkaraoIo/expenseTracker/issues/new";
 
 const DEFAULT_CATEGORIES = [
@@ -671,6 +672,94 @@ function saveExpense() {
   showPanel("dashboard");
 }
 
+async function shareOrDownloadFile(blob, fileName, title) {
+  if (navigator.share) {
+    try {
+      const file = new File([blob], fileName, { type: blob.type });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title });
+        return true;
+      }
+    } catch (err) {
+      if (err?.name === "AbortError") return true;
+    }
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = fileName;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  return true;
+}
+
+function markBackupSaved() {
+  const when = new Date().toISOString();
+  localStorage.setItem(BACKUP_KEY, when);
+  updateLastBackupLabel();
+}
+
+function updateLastBackupLabel() {
+  const el = document.getElementById("last-backup-label");
+  if (!el) return;
+  const when = localStorage.getItem(BACKUP_KEY);
+  el.textContent = when
+    ? `Last full backup: ${new Date(when).toLocaleString()}`
+    : "No full backup saved on this device yet.";
+}
+
+async function exportFullBackup() {
+  const payload = {
+    format: "expense-tracker-backup",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    appVersion: APP_VERSION,
+    data: state,
+  };
+  const fileName = `expense-tracker-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  await shareOrDownloadFile(blob, fileName, "ExpenseTracker backup");
+  markBackupSaved();
+}
+
+function triggerImportBackup() {
+  document.getElementById("import-json")?.click();
+}
+
+function importFullBackupFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(String(reader.result));
+      const incoming = parsed.data || parsed;
+      const next = migrateState({
+        expenses: incoming.expenses || [],
+        settings: incoming.settings || {},
+        storeDirectory: incoming.storeDirectory || {},
+      });
+      const count = next.expenses.length;
+      if (!count) {
+        alert("This backup has no expenses.");
+        return;
+      }
+      const replace = confirm(
+        `Restore ${count} expense(s)?\n\nOK = replace current data\nCancel = keep current data`
+      );
+      if (!replace) return;
+      state.expenses = next.expenses;
+      state.settings = { ...state.settings, ...next.settings };
+      state.storeDirectory = next.storeDirectory || {};
+      addPlace = state.settings.lastPlace || "";
+      saveState();
+      markBackupSaved();
+      alert("Backup restored.");
+      showPanel("dashboard");
+    } catch {
+      alert("Could not read this backup file.");
+    }
+  };
+  reader.readAsText(file);
+}
+
 function exportCSV() {
   const rows = [["Date", "Category", "Store", "Area", "Amount", "Currency"]];
   for (const e of [...state.expenses].sort((a, b) => new Date(b.date) - new Date(a.date))) {
@@ -688,8 +777,8 @@ function exportCSV() {
   const blob = new Blob([csv], { type: "text/csv" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `expenses-${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
+  const fileName = `expenses-${new Date().toISOString().slice(0, 10)}.csv`;
+  shareOrDownloadFile(blob, fileName, "ExpenseTracker CSV");
 }
 
 function showPanel(name) {
@@ -715,6 +804,7 @@ function render() {
     document.getElementById("currency").value = state.settings.currency;
     document.getElementById("budget").value = state.settings.budget ?? "";
     document.getElementById("app-version").textContent = APP_VERSION;
+    updateLastBackupLabel();
   }
 }
 
@@ -866,6 +956,10 @@ function init() {
   document.getElementById("search").addEventListener("input", renderExpenses);
   document.getElementById("save-expense").addEventListener("click", saveExpense);
   document.getElementById("go-add").addEventListener("click", () => showPanel("add"));
+  document.getElementById("restore-from-empty")?.addEventListener("click", () => {
+    showPanel("settings");
+    triggerImportBackup();
+  });
 
   document.getElementById("currency").addEventListener("change", (e) => {
     state.settings.currency = e.target.value;
@@ -875,7 +969,14 @@ function init() {
     state.settings.budget = e.target.value ? Number(e.target.value) : null;
     saveState();
   });
+  document.getElementById("export-json")?.addEventListener("click", () => exportFullBackup());
   document.getElementById("export-csv").addEventListener("click", exportCSV);
+  document.getElementById("import-json-btn")?.addEventListener("click", triggerImportBackup);
+  document.getElementById("import-json")?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (file) importFullBackupFromFile(file);
+    e.target.value = "";
+  });
   document.getElementById("feedback-link").href = FEEDBACK_URL;
 
   document.querySelectorAll("nav button").forEach((btn) => {
