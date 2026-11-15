@@ -35,7 +35,7 @@ body {
   -webkit-user-select: none;
 }
 
-input, textarea, select, .row-note { user-select: text; -webkit-user-select: text; }
+input, textarea, select, .row-note, .row-comment { user-select: text; -webkit-user-select: text; }
 
 header {
   position: sticky;
