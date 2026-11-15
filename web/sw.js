@@ -1,4 +1,4 @@
-const CACHE = "expense-tracker-v7";
+const CACHE = "expense-tracker-v8";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon.svg", "./apple-touch-icon.png", "./app.js", "./styles.css"];
 
 self.addEventListener("install", (e) => {
@@ -20,8 +20,34 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();
 });
 
-self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then((cached) => cached || fetch(e.request))
+function isAppShellRequest(url) {
+  const path = url.pathname;
+  return (
+    path.endsWith("/") ||
+    path.endsWith("/index.html") ||
+    path.endsWith("/app.js") ||
+    path.endsWith("/styles.css") ||
+    path.endsWith("/sw.js")
   );
+}
+
+self.addEventListener("fetch", (e) => {
+  if (e.request.method !== "GET") return;
+  const url = new URL(e.request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (isAppShellRequest(url)) {
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, copy));
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  e.respondWith(caches.match(e.request).then((cached) => cached || fetch(e.request)));
 });

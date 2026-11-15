@@ -472,6 +472,16 @@ nav button.active { color: var(--accent); }
   padding: 4px 6px;
 }
 
+.update-banner .btn,
+.update-banner .dismiss-btn {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+}
+
+.update-banner .btn:disabled {
+  opacity: 0.7;
+}
+
 .settings-header {
   display: flex;
   align-items: center;

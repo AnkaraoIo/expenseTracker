@@ -1,5 +1,5 @@
 const STORAGE_KEY = "expense-tracker-pwa";
-const APP_VERSION = "0.2.2-beta";
+const APP_VERSION = "0.2.3-beta";
 const BACKUP_KEY = "expense-tracker-last-backup";
 const FEEDBACK_URL = "https://github.com/AnkaraoIo/expenseTracker/issues/new";
 
@@ -844,7 +844,9 @@ function setupServiceWorkerUpdates() {
   navigator.serviceWorker.addEventListener("controllerchange", () => {
     if (!pendingSwReload) return;
     pendingSwReload = false;
-    window.location.reload();
+    const url = new URL(window.location.href);
+    url.searchParams.set("refresh", String(Date.now()));
+    window.location.replace(url.toString());
   });
 
   navigator.serviceWorker
@@ -872,21 +874,63 @@ function setupServiceWorkerUpdates() {
   });
 }
 
-function applyServiceWorkerUpdate() {
-  const reg = swRegistration;
-  if (!reg?.waiting) {
-    window.location.reload();
-    return;
+async function applyServiceWorkerUpdate() {
+  const btn = document.getElementById("apply-update");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Updating…";
   }
-  pendingSwReload = true;
-  reg.waiting.postMessage({ type: "SKIP_WAITING" });
+  hideUpdateBanner();
+  sessionStorage.removeItem("update-banner-dismissed");
+
+  try {
+    const reg = swRegistration || (await navigator.serviceWorker.getRegistration());
+    await reg?.update();
+
+    if (reg?.waiting) {
+      pendingSwReload = true;
+      reg.waiting.postMessage({ type: "SKIP_WAITING" });
+    } else if (reg?.installing) {
+      await new Promise((resolve) => {
+        const worker = reg.installing;
+        worker.addEventListener("statechange", () => {
+          if (worker.state === "installed" && navigator.serviceWorker.controller) {
+            pendingSwReload = true;
+            worker.postMessage({ type: "SKIP_WAITING" });
+          }
+          if (worker.state === "activated") resolve();
+        });
+        setTimeout(resolve, 1200);
+      });
+    }
+
+    const keys = await caches.keys();
+    await Promise.all(keys.map((name) => caches.delete(name)));
+  } catch (_) {}
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("refresh", String(Date.now()));
+  window.location.replace(url.toString());
+}
+
+function stripRefreshQueryParam() {
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has("refresh")) return;
+  url.searchParams.delete("refresh");
+  const next = url.pathname + (url.searchParams.toString() ? `?${url.searchParams}` : "") + url.hash;
+  history.replaceState(null, "", next);
 }
 
 function init() {
+  stripRefreshQueryParam();
   setupServiceWorkerUpdates();
 
   showInstallBannerIfNeeded();
-  document.getElementById("apply-update")?.addEventListener("click", applyServiceWorkerUpdate);
+  document.getElementById("apply-update")?.addEventListener("click", () => {
+    applyServiceWorkerUpdate().catch(() => {
+      window.location.reload();
+    });
+  });
   document.getElementById("dismiss-update")?.addEventListener("click", () => {
     sessionStorage.setItem("update-banner-dismissed", "1");
     hideUpdateBanner();
