@@ -1,5 +1,5 @@
 const STORAGE_KEY = "expense-tracker-pwa";
-const APP_VERSION = "0.2.3-beta";
+const APP_VERSION = "0.2.4-beta";
 const BACKUP_KEY = "expense-tracker-last-backup";
 const FEEDBACK_URL = "https://github.com/AnkaraoIo/expenseTracker/issues/new";
 
@@ -44,6 +44,7 @@ function migrateState(s) {
   if (!s.settings.lastPlace) s.settings.lastPlace = "";
   for (const e of s.expenses || []) {
     if (e.place === undefined) e.place = null;
+    if (e.comment === undefined) e.comment = null;
   }
   return s;
 }
@@ -524,13 +525,15 @@ function expenseRowInnerHTML(e, withDelete = false, preferStore = false) {
   const title = preferStore && store ? escapeHtml(store) : c.name;
   const placeLine = (e.place || "").trim()
     ? `<div class="row-place">${escapeHtml(e.place)}</div>`
-  : "";
+    : "";
+  const comment = (e.comment || "").trim();
+  const commentLine = comment ? `<div class="row-comment">${escapeHtml(comment)}</div>` : "";
   const subtitle =
     preferStore && store
-      ? `<div class="row-note">${c.emoji} ${c.name}</div>${placeLine}`
+      ? `<div class="row-note">${c.emoji} ${c.name}</div>${placeLine}${commentLine}`
       : store
-        ? `<div class="row-note">${escapeHtml(store)}</div>${placeLine}`
-        : placeLine;
+        ? `<div class="row-note">${escapeHtml(store)}</div>${placeLine}${commentLine}`
+        : `${placeLine}${commentLine}`;
   return `
       <div class="cat-icon" style="background:${c.color}22;color:${c.color}">${c.emoji}</div>
       <div class="row-main">
@@ -555,7 +558,11 @@ function renderExpenses() {
   if (q) {
     expenses = expenses.filter((e) => {
       const c = categoryById(e.categoryId);
-      return c.name.toLowerCase().includes(q) || (e.note || "").toLowerCase().includes(q);
+      return (
+        c.name.toLowerCase().includes(q) ||
+        (e.note || "").toLowerCase().includes(q) ||
+        (e.comment || "").toLowerCase().includes(q)
+      );
     });
   }
 
@@ -613,6 +620,7 @@ function resetAddForm() {
   editingId = null;
   document.getElementById("amount").value = "";
   document.getElementById("note").value = "";
+  document.getElementById("comment").value = "";
   document.getElementById("store-select").value = "";
   document.getElementById("place-label").value = state.settings.lastPlace || addPlace || "";
   document.getElementById("place-status").hidden = true;
@@ -630,6 +638,7 @@ function openEdit(id) {
   selectedCategory = e.categoryId;
   document.getElementById("amount").value = e.amount;
   document.getElementById("note").value = e.note || "";
+  document.getElementById("comment").value = e.comment || "";
   document.getElementById("store-select").value = e.note || "";
   document.getElementById("place-label").value = e.place || "";
   document.getElementById("date").value = e.date.slice(0, 10);
@@ -653,6 +662,7 @@ function saveExpense() {
     categoryId: selectedCategory,
     date: new Date(document.getElementById("date").value).toISOString(),
     note: storeName,
+    comment: document.getElementById("comment").value.trim() || null,
     place,
     createdAt: new Date().toISOString(),
   };
@@ -761,13 +771,14 @@ function importFullBackupFromFile(file) {
 }
 
 function exportCSV() {
-  const rows = [["Date", "Category", "Store", "Area", "Amount", "Currency"]];
+  const rows = [["Date", "Category", "Store", "Comment", "Area", "Amount", "Currency"]];
   for (const e of [...state.expenses].sort((a, b) => new Date(b.date) - new Date(a.date))) {
     const c = categoryById(e.categoryId);
     rows.push([
       e.date.slice(0, 10),
       c.name,
       e.note || "",
+      e.comment || "",
       e.place || "",
       e.amount,
       state.settings.currency,

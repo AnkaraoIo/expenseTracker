@@ -101,7 +101,7 @@
     </section>
 
     <section id="panel-expenses" class="panel">
-      <input class="search" type="search" id="search" placeholder="Search notes or categories" />
+      <input class="search" type="search" id="search" placeholder="Search store, comment, or category" />
       <div id="expense-list"></div>
     </section>
 
@@ -133,6 +133,9 @@
           </select>
           <input id="note" type="text" placeholder="New store name" autocomplete="off" />
         </div>
+
+        <label for="comment">Comment (optional)</label>
+        <textarea id="comment" rows="2" placeholder="e.g. gift for Mom, work lunch, split with Alex"></textarea>
 
         <button type="button" class="btn" id="save-expense">Save</button>
       </div>
