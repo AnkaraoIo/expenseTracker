@@ -46,12 +46,46 @@
         <button type="button" class="btn" id="go-add" style="margin-top:16px">Add first expense</button>
       </div>
 
+      <div class="card dash-filters" id="dash-filters" hidden>
+        <div class="filter-row">
+          <label for="dash-view">View</label>
+          <select id="dash-view">
+            <option value="overview">Overview</option>
+            <option value="stores">By store</option>
+            <option value="timeline">Timeline</option>
+          </select>
+        </div>
+        <div class="filter-row">
+          <label for="dash-place-filter">Area</label>
+          <select id="dash-place-filter">
+            <option value="">All areas</option>
+          </select>
+        </div>
+        <div class="filter-row">
+          <label for="dash-store-filter">Store</label>
+          <select id="dash-store-filter">
+            <option value="">All stores</option>
+          </select>
+        </div>
+      </div>
+
       <div class="card" id="chart-card">
         <h2>By category</h2>
         <div id="category-chart"></div>
       </div>
 
-      <div class="card">
+      <div class="card" id="stores-card">
+        <h2 id="stores-heading">Top stores</h2>
+        <div id="store-chart"></div>
+        <p class="muted stores-empty" id="stores-empty" hidden>No store names yet — pick a store when adding an expense.</p>
+      </div>
+
+      <div class="card" id="dash-expenses-card">
+        <h2 id="dash-expenses-heading">This month</h2>
+        <div id="dash-expenses-body"></div>
+      </div>
+
+      <div class="card" id="recent-card">
         <h2>Recent</h2>
         <ul class="list" id="recent-list"></ul>
       </div>
@@ -74,8 +108,22 @@
         <label for="date">Date</label>
         <input id="date" type="date" />
 
-        <label for="note">Note</label>
-        <textarea id="note" rows="2" placeholder="Optional"></textarea>
+        <div class="place-row">
+          <label for="place-label">Area (optional)</label>
+          <div class="place-controls">
+            <input id="place-label" type="text" placeholder="City, neighborhood" autocomplete="off" />
+            <button type="button" class="btn secondary compact-btn" id="use-location">Use location</button>
+          </div>
+          <p class="muted place-status" id="place-status" hidden></p>
+        </div>
+
+        <label for="store-select">Store</label>
+        <div class="store-field">
+          <select id="store-select">
+            <option value="">Choose or type new…</option>
+          </select>
+          <input id="note" type="text" placeholder="New store name" autocomplete="off" />
+        </div>
 
         <button type="button" class="btn" id="save-expense">Save</button>
       </div>

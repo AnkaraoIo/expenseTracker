@@ -117,6 +117,129 @@ main { padding: 16px 20px 24px; max-width: 560px; margin: 0 auto; }
   border-radius: 999px;
 }
 
+.store-fill {
+  background: color-mix(in srgb, var(--accent) 85%, #5856d6);
+}
+
+.dash-filters {
+  display: grid;
+  gap: 12px;
+}
+
+.filter-row {
+  display: grid;
+  gap: 6px;
+}
+
+.filter-row label {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.filter-row select {
+  margin-bottom: 0;
+}
+
+.place-row { margin-bottom: 16px; }
+
+.place-controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.place-controls input { margin-bottom: 0; }
+
+.place-status {
+  font-size: 0.8125rem;
+  margin-top: 8px;
+}
+
+.store-field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.store-field select,
+.store-field input {
+  margin-bottom: 0;
+}
+
+.compact-btn {
+  padding: 10px 12px;
+  width: auto;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.dash-group-list { padding: 0 4px; }
+
+.place-accordion,
+.store-accordion {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--card) 95%, var(--bg));
+}
+
+.place-summary,
+.store-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.store-accordion { margin: 8px; }
+
+.store-summary {
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.store-bar-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.row-place {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+.stores-empty {
+  font-size: 0.8125rem;
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.store-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 58vw;
+}
+
+.store-meta {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 .list { list-style: none; }
 .list li {
   display: flex;
